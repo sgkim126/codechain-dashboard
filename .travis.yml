@@ -1,54 +1,16 @@
-language: rust
-rust:
-  - 1.38.0
-jobs:
-    include:
-        - name: server
-          before_install:
-            - cd $TRAVIS_JOB_NAME
-          install:
-            - rustup set profile minimal
-            - rustup toolchain install nightly-2019-10-13
-            - rustup component add rustfmt-preview --toolchain nightly-2019-10-13
-            - rustup component add clippy-preview --toolchain nightly-2019-10-13
-          before_script:
-            - cargo fetch --verbose
-          script:
-            - cargo +nightly-2019-10-13 fmt -- --check
-              && RUST_BACKTRACE=1 cargo test --verbose --all
-              && cargo +nightly-2019-10-13 clippy --all --all-targets -- -D warnings
-        - name: client
-          before_install:
-            - cd $TRAVIS_JOB_NAME
-          install:
-            - rustup set profile minimal
-            - rustup toolchain install nightly-2019-10-13
-            - rustup component add rustfmt-preview --toolchain nightly-2019-10-13
-            - rustup component add clippy-preview --toolchain nightly-2019-10-13
-          before_script:
-            - cargo fetch --verbose
-          script:
-            - cargo +nightly-2019-10-13 fmt -- --check
-              && RUST_BACKTRACE=1 cargo test --verbose --all
-              && cargo +nightly-2019-10-13 clippy --all --all-targets -- -D warnings
-        - name: ui
-          before_install:
-            - cd $TRAVIS_JOB_NAME
-            - nvm install 10
-            - nvm use 10
-            - npm install -g yarn
-          install:
-            - yarn install
-          script:
-            - yarn lint
-            - yarn build
+language: node_js
+node_js:
+  - 10
+before_install:
+    - cd ui
+    - npm install -g yarn
+install:
+    - yarn install
+script:
+    - yarn lint
+    - yarn build
 cache:
-    cargo: true
-    directories:
-        - "$HOME/.rustup"
-before_cache:
-    - rm -rf $HOME/.cargo/registry
-    - rm -rf $TRAVIS_BUILD_DIR/target
+    npm: true
+    yarn: true
 git:
   depth: 1
-
